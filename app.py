@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def index():
 
-    resultaten = None
+    resultaten = []
 
     if request.method == "POST":
 
@@ -16,8 +16,12 @@ def index():
             "huisnummer": int(request.form["huisnummer"]),
             "toevoeging": request.form["toevoeging"],
             "stroom_verbruik": int(request.form["stroom_verbruik"]),
-            "stroom_verbruik_dal": int(request.form["stroom_verbruik_dal"]),
-            "teruglevering": int(request.form["teruglevering"]),
+            "stroom_verbruik_dal": int(
+                request.form["stroom_verbruik_dal"]
+            ),
+            "teruglevering": int(
+                request.form["teruglevering"]
+            ),
             "teruglevering_dal": int(
                 request.form["teruglevering_dal"]
             ),

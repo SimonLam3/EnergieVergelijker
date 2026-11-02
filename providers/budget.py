@@ -16,9 +16,7 @@ def budget(
     response = requests.post(
         "https://api.budgetthuis.nl/energy/v1/online-offers",
         json={
-            "resellerId": (
-                "b393573d-1396-4b94-e177-08dc12b65bff"
-            ),
+            "resellerId": "b393573d-1396-4b94-e177-08dc12b65bff",
             "hasSmartMeter": slimme_meter,
             "address": {
                 "postalCode": postcode,
@@ -41,45 +39,41 @@ def budget(
 
     offertes = []
 
-    offers = data["salesChannels"][0]["offers"]
+    for offer in data["salesChannels"][0]["offers"]:
 
-    for offer in offers:
+        contract = offer["proposition"]["externalName"]
 
-        contract = (
-            offer["proposition"]["externalName"]
-        )
+        if contract == "Budget Energie 1 jaar vast":
+            contract_type = "1_jaar"
 
-        mapping = {
-            "Budget Energie Dynamisch":
-                "dynamisch",
+        elif contract == "Budget Energie 3 jaar vast":
+            contract_type = "3_jaar"
 
-            "Budget Energie Variabel":
-                "variabel",
+        elif contract == "Budget Energie Variabel":
+            contract_type = "variabel"
 
-            "Budget Energie 1 jaar vast":
-                "1_jaar",
+        elif contract == "Budget Energie Dynamisch":
+            contract_type = "dynamisch"
 
-            "Budget Energie 3 jaar vast":
-                "3_jaar"
-        }
+        else:
+            contract_type = "onbekend"
 
-        contract_type = mapping.get(
-            contract,
-            "onbekend"
-        )
+        jaarprijs = None
 
-        jaarprijs = (
-            offer.get(
-                "yearlyAmountTotal",
-                {}
-            ).get(
-                "amountGross"
-            )
-        )
+        for veld in [
+            "yearlyAmountTotal",
+            "yearlyAmountRawTotal",
+            "yearlyAmount"
+        ]:
+            if veld in offer:
+                jaarprijs = (
+                    offer[veld]
+                    .get("amountGross")
+                )
+                break
 
         maandprijs = None
 
-        # Budget gebruikt niet altijd hetzelfde veld
         for veld in [
             "monthlyAmountTotal",
             "monthlyAmountRawTotal",
@@ -92,33 +86,32 @@ def budget(
                 )
                 break
 
+        if jaarprijs is None:
+            print(
+                f"Geen jaarprijs gevonden voor: "
+                f"{contract}"
+            )
+            print(offer.keys())
+            continue
+
         if maandprijs is None:
             print(
                 f"Geen maandprijs gevonden voor: "
                 f"{contract}"
             )
-            print(
-                offer.keys()
-            )
+            print(offer.keys())
+            continue
 
         offertes.append({
             "leverancier": "Budget Energie",
             "contract": contract,
             "type": contract_type,
             "jaarprijs": jaarprijs,
-            "maandprijs": maandprijs,
-            "cashback": (
-                offer.get(
-                    "cashback",
-                    {}
-                ).get(
-                    "amountGross",
-                    0
-                )
-            )
+            "maandprijs": maandprijs
         })
 
     return offertes
+
 
 if __name__ == "__main__":
 
@@ -140,7 +133,14 @@ if __name__ == "__main__":
 
     for offerte in resultaten:
 
-        print(offerte["contract"])
+        print(
+            offerte["leverancier"],
+            offerte["type"]
+        )
+
+        print(
+            offerte["contract"]
+        )
 
         print(
             "Jaarprijs:",
@@ -148,7 +148,7 @@ if __name__ == "__main__":
         )
 
         print(
-            "maandprijs:",
+            "Maandprijs:",
             offerte["maandprijs"]
         )
 

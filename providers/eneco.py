@@ -167,9 +167,26 @@ if __name__ == "__main__":
         huisnummer=42,
         toevoeging="",
         stroom_verbruik=5000,
-        stroom_verbruik_dal=5000,
-        teruglevering=1500,
-        teruglevering_dal=1500,
-        gas=1200,
+        stroom_verbruik_dal=4000,
+        teruglevering=0,
+        teruglevering_dal=0,
+        gas=500,
         slimme_meter=True
     )
+
+    for offerte in resultaten:
+
+        print(
+            offerte["leverancier"],
+            offerte["type"]
+        )
+
+        print(
+            offerte["contract"]
+        )
+
+        print(
+            offerte["jaarprijs"]
+        )
+
+        print("-" * 40)
