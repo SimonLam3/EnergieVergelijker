@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Energievergelijker</title>
+</head>
+<body>
+
+    <h1>Energievergelijker</h1>
+
+    <form method="POST">
+
+        <p>
+            <label>Stroomverbruik (kWh)</label><br>
+            <input type="number" name="stroom">
+        </p>
+
+        <p>
+            <label>Gasverbruik (m³)</label><br>
+            <input type="number" name="gas">
+        </p>
+
+        <p>
+            <label>Postcode</label><br>
+            <input type="text" name="postcode">
+        </p>
+
+        <h3>Contracttypes</h3>
+
+        <input type="checkbox" name="contract" value="1_jaar">
+        1 Jaar Vast
+        <br>
+
+        <input type="checkbox" name="contract" value="3_jaar">
+        3 Jaar Vast
+        <br>
+
+        <input type="checkbox" name="contract" value="variabel">
+        Variabel
+        <br>
+
+        <input type="checkbox" name="contract" value="dynamisch">
+        Dynamisch
+        <br><br>
+
+        <button type="submit">
+            Vergelijk
+        </button>
+
+    </form>
+
+    {% if resultaten %}
+
+    <h2>1 Jaar Vast</h2>
+
+    <ul>
+    {% for offerte in resultaten["1_jaar"] %}
+        <li>
+            {{ offerte["leverancier"] }}
+            -
+            €{{ offerte["jaarprijs"] }}
+        </li>
+    {% endfor %}
+    </ul>
+
+    {% endif %}
+
+</body>
+</html>

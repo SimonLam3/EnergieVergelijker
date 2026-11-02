@@ -1,0 +1,4 @@
+Gas verbruik:400
+Energie verbruik: 7600
+
+Teruglever: 1500
